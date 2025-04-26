@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "scheme": "acme",
+    "plugins": [
+      "expo-router"
+    ],
+    "name": "ai-travel-planner",
+    "slug": "ai-travel-planner"
+  }
+}
