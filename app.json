@@ -2,9 +2,10 @@
   "expo": {
     "scheme": "acme",
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-secure-store"
     ],
-    "name": "ai-travel-planner",
-    "slug": "ai-travel-planner"
+    "name": "ai-travel-app",
+    "slug": "ai-travel-app"
   }
 }
