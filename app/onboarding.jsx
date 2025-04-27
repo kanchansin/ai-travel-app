@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, FlatList, Image, Dimensions, Animated } from 'r
 import { useRouter } from 'expo-router';
 import { useTheme } from '../contexts/ThemeContext';
 import Button from '../components/ui/Button';
-import { SIZES, FONTS } from '../constants/theme';
+import { SIZES, FONTS, colors } from '../constants/theme';
 
 const { width } = Dimensions.get('window');
 

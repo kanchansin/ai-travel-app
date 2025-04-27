@@ -1,3 +1,5 @@
+//app/trips.jsx
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, RefreshControl, StyleSheet, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';

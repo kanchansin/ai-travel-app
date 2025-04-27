@@ -6,7 +6,7 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Button from '../components/ui/Button';
-import { SIZES, FONTS } from '../constants/theme';
+import { SIZES, FONTS, COLORS } from '../constants/theme';
 
 export default function SplashScreen() {
   const router = useRouter();
@@ -54,17 +54,17 @@ export default function SplashScreen() {
   }, [loading, user]);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: COLORS.background }]}>
       <View style={styles.logoContainer}>
         <Image
           source={require('../assets/images/logo.png')}
           style={styles.logo}
           resizeMode="contain"
         />
-        <Text style={[styles.appName, { color: colors.primary }]}>
+        <Text style={[styles.appName, { color: COLORS.primary }]}>
           AI Travel Planner
         </Text>
-        <Text style={[styles.tagline, { color: colors.textLight }]}>
+        <Text style={[styles.tagline, { color: COLORS.textLight }]}>
           Your smart companion for local adventures
         </Text>
       </View>

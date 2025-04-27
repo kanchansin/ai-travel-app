@@ -1,3 +1,6 @@
+//service/auth.js
+// This file contains functions to handle user authentication using Firebase Authentication.
+
 import { 
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 

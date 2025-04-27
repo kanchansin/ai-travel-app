@@ -6,6 +6,7 @@
       "expo-secure-store"
     ],
     "name": "ai-travel-app",
-    "slug": "ai-travel-app"
+    "slug": "ai-travel-app",
+    "newArchEnabled": true
   }
 }

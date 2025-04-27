@@ -1,32 +1,33 @@
-// backend/server.js
+// backend/app.js
 const express = require('express');
 const cors = require('cors');
-const { initializeApp } = require('./config/firebase');
+const { corsOptions } = require('./config/cors');
 const errorHandler = require('./middleware/errorHandler');
 
 // Import routes
 const authRoutes = require('./routes/auth');
 const tripRoutes = require('./routes/trips');
+const storyRoutes = require('./routes/stories');
+const placeRoutes = require('./routes/places');
 const userRoutes = require('./routes/users');
+const recommendationRoutes = require('./routes/recommendations'); // Add recommendation routes
 
-// Initialize Firebase Admin
-initializeApp();
-
-// Create Express app
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/stories', storyRoutes);
+app.use('/api/places', placeRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/recommendations', recommendationRoutes); // Add recommendation routes
 
-// Health check endpoint
+// Health check route
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is running' });
 });
@@ -34,9 +35,4 @@ app.get('/health', (req, res) => {
 // Error handling middleware
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-module.exports = app;  // For testing
+module.exports = app;

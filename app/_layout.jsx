@@ -5,7 +5,7 @@ import { ThemeProvider } from '../contexts/ThemeContext';
 import { AuthProvider } from '../contexts/AuthContext';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
-
+ 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
