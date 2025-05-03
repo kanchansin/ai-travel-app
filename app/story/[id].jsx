@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   View, 
   Text, 
@@ -34,15 +34,16 @@ import {
   getStoryComments 
 } from '../../services/stories';
 import { getUserProfile } from '../../services/users';
-import { colors, spacing } from '../../constants/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 import CommentItem from '../../components/comment/CommentItem';
 import CommentInput from '../../components/comment/CommentInput';
 import MapView, { Marker } from 'react-native-maps';
 
-export default function StoryDetail() {
+const StoryDetail = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { user } = useAuth();
+  const { theme } = useTheme();
   
   const [story, setStory] = useState(null);
   const [author, setAuthor] = useState(null);
@@ -208,10 +209,234 @@ export default function StoryDetail() {
     });
   };
   
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    errorContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: theme.spacing.lg,
+    },
+    errorText: {
+      fontSize: 18,
+      color: theme.colors.gray[700],
+      marginBottom: theme.spacing.md,
+    },
+    backButton: {
+      backgroundColor: theme.colors.primary,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: 8,
+    },
+    backButtonText: {
+      color: theme.colors.white,
+      fontWeight: '600',
+    },
+    scrollContent: {
+      paddingBottom: theme.spacing.xl,
+    },
+    imageContainer: {
+      position: 'relative',
+      width: '100%',
+      height: 300,
+    },
+    headerImage: {
+      width: '100%',
+      height: '100%',
+    },
+    headerImagePlaceholder: {
+      width: '100%',
+      height: '100%',
+      backgroundColor: theme.colors.gray[200],
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    placeholderText: {
+      color: theme.colors.gray[500],
+      fontWeight: '500',
+    },
+    headerOverlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '100%',
+      backgroundColor: 'rgba(0,0,0,0.2)',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      padding: theme.spacing.md,
+    },
+    backIconButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'rgba(0,0,0,0.3)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    headerRightButtons: {
+      flexDirection: 'row',
+    },
+    headerIconButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'rgba(0,0,0,0.3)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: theme.spacing.sm,
+    },
+    moreOptionsMenu: {
+      position: 'absolute',
+      top: 60,
+      right: theme.spacing.md,
+      backgroundColor: theme.colors.white,
+      borderRadius: 8,
+      padding: theme.spacing.sm,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 4,
+      width: 150,
+    },
+    moreOptionItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.sm,
+    },
+    moreOptionText: {
+      marginLeft: theme.spacing.sm,
+      color: theme.colors.gray[700],
+      fontWeight: '500',
+    },
+    contentContainer: {
+      padding: theme.spacing.lg,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: theme.colors.gray[800],
+      marginBottom: theme.spacing.sm,
+    },
+    metaContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: theme.spacing.md,
+    },
+    metaItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: theme.spacing.md,
+      marginBottom: theme.spacing.xs,
+    },
+    metaText: {
+      fontSize: 14,
+      color: theme.colors.gray[600],
+      marginLeft: 4,
+    },
+    authorContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.gray[200],
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.gray[200],
+      marginBottom: theme.spacing.md,
+    },
+    authorAvatar: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+    },
+    authorInfo: {
+      marginLeft: theme.spacing.sm,
+    },
+    authorName: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.gray[800],
+    },
+    authorLocation: {
+      fontSize: 14,
+      color: theme.colors.gray[600],
+    },
+    storyContent: {
+      fontSize: 16,
+      lineHeight: 24,
+      color: theme.colors.gray[700],
+      marginBottom: theme.spacing.lg,
+    },
+    mapContainer: {
+      height: 200,
+      marginBottom: theme.spacing.lg,
+      borderRadius: 12,
+      overflow: 'hidden',
+    },
+    map: {
+      height: '100%',
+      width: '100%',
+    },
+    imageGalleryContainer: {
+      paddingBottom: theme.spacing.sm,
+    },
+    galleryImage: {
+      width: 160,
+      height: 120,
+      borderRadius: 8,
+      marginRight: theme.spacing.sm,
+    },
+    interactionBar: {
+      flexDirection: 'row',
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.gray[200],
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.gray[200],
+      paddingVertical: theme.spacing.md,
+      marginBottom: theme.spacing.lg,
+    },
+    interactionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: theme.spacing.xl,
+    },
+    interactionText: {
+      marginLeft: theme.spacing.xs,
+      color: theme.colors.gray[600],
+      fontWeight: '500',
+    },
+    commentsSection: {
+      marginTop: theme.spacing.sm,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: theme.colors.gray[800],
+      marginBottom: theme.spacing.md,
+    },
+    commentsLoading: {
+      paddingVertical: theme.spacing.lg,
+    },
+    noCommentsText: {
+      textAlign: 'center',
+      paddingVertical: theme.spacing.lg,
+      color: theme.colors.gray[500],
+    },
+  }), [theme]);
+  
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={theme.colors.primary} />
       </SafeAreaView>
     );
   }
@@ -266,7 +491,7 @@ export default function StoryDetail() {
               style={styles.backIconButton}
               onPress={() => router.back()}
             >
-              <ArrowLeft size={24} color={colors.white} />
+              <ArrowLeft size={24} color={theme.colors.white} />
             </TouchableOpacity>
             
             <View style={styles.headerRightButtons}>
@@ -276,8 +501,8 @@ export default function StoryDetail() {
               >
                 <Bookmark 
                   size={24} 
-                  color={colors.white} 
-                  fill={isBookmarked ? colors.white : 'transparent'} 
+                  color={theme.colors.white} 
+                  fill={isBookmarked ? theme.colors.white : 'transparent'} 
                 />
               </TouchableOpacity>
               
@@ -286,7 +511,7 @@ export default function StoryDetail() {
                   style={styles.headerIconButton}
                   onPress={() => setShowMoreOptions(!showMoreOptions)}
                 >
-                  <MoreVertical size={24} color={colors.white} />
+                  <MoreVertical size={24} color={theme.colors.white} />
                 </TouchableOpacity>
               )}
             </View>
@@ -298,7 +523,7 @@ export default function StoryDetail() {
                   style={styles.moreOptionItem}
                   onPress={handleEditStory}
                 >
-                  <Edit size={18} color={colors.gray[700]} />
+                  <Edit size={18} color={theme.colors.gray[700]} />
                   <Text style={styles.moreOptionText}>Edit Story</Text>
                 </TouchableOpacity>
                 
@@ -306,8 +531,8 @@ export default function StoryDetail() {
                   style={styles.moreOptionItem}
                   onPress={handleDeleteStory}
                 >
-                  <Trash size={18} color={colors.error} />
-                  <Text style={[styles.moreOptionText, { color: colors.error }]}>
+                  <Trash size={18} color={theme.colors.error} />
+                  <Text style={[styles.moreOptionText, { color: theme.colors.error }]}>
                     Delete Story
                   </Text>
                 </TouchableOpacity>
@@ -323,14 +548,14 @@ export default function StoryDetail() {
           <View style={styles.metaContainer}>
             {story.location && (
               <View style={styles.metaItem}>
-                <MapPin size={16} color={colors.primary} />
+                <MapPin size={16} color={theme.colors.primary} />
                 <Text style={styles.metaText}>{story.location}</Text>
               </View>
             )}
             
             {story.createdAt && (
               <View style={styles.metaItem}>
-                <Calendar size={16} color={colors.primary} />
+                <Calendar size={16} color={theme.colors.primary} />
                 <Text style={styles.metaText}>{formatDate(story.createdAt)}</Text>
               </View>
             )}
@@ -408,13 +633,13 @@ export default function StoryDetail() {
             >
               <Heart 
                 size={24} 
-                color={isLiked ? colors.error : colors.gray[600]} 
-                fill={isLiked ? colors.error : 'transparent'} 
+                color={isLiked ? theme.colors.error : theme.colors.gray[600]} 
+                fill={isLiked ? theme.colors.error : 'transparent'} 
               />
               <Text 
                 style={[
                   styles.interactionText, 
-                  isLiked && { color: colors.error }
+                  isLiked && { color: theme.colors.error }
                 ]}
               >
                 {story.likes || 0}
@@ -422,7 +647,7 @@ export default function StoryDetail() {
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.interactionButton}>
-              <MessageCircle size={24} color={colors.gray[600]} />
+              <MessageCircle size={24} color={theme.colors.gray[600]} />
               <Text style={styles.interactionText}>
                 {comments.length}
               </Text>
@@ -432,7 +657,7 @@ export default function StoryDetail() {
               style={styles.interactionButton}
               onPress={handleShare}
             >
-              <Share2 size={24} color={colors.gray[600]} />
+              <Share2 size={24} color={theme.colors.gray[600]} />
               <Text style={styles.interactionText}>Share</Text>
             </TouchableOpacity>
           </View>
@@ -449,7 +674,7 @@ export default function StoryDetail() {
               <ActivityIndicator 
                 style={styles.commentsLoading} 
                 size="small" 
-                color={colors.primary} 
+                color={theme.colors.primary} 
               />
             ) : comments.length > 0 ? (
               comments.map(comment => (
@@ -470,226 +695,4 @@ export default function StoryDetail() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.lg,
-  },
-  errorText: {
-    fontSize: 18,
-    color: colors.gray[700],
-    marginBottom: spacing.md,
-  },
-  backButton: {
-    backgroundColor: colors.primary,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: 8,
-  },
-  backButtonText: {
-    color: colors.white,
-    fontWeight: '600',
-  },
-  scrollContent: {
-    paddingBottom: spacing.xl,
-  },
-  imageContainer: {
-    position: 'relative',
-    width: '100%',
-    height: 300,
-  },
-  headerImage: {
-    width: '100%',
-    height: '100%',
-  },
-  headerImagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: colors.gray[200],
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderText: {
-    color: colors.gray[500],
-    fontWeight: '500',
-  },
-  headerOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '100%',
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: spacing.md,
-  },
-  backIconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerRightButtons: {
-    flexDirection: 'row',
-  },
-  headerIconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: spacing.sm,
-  },
-  moreOptionsMenu: {
-    position: 'absolute',
-    top: 60,
-    right: spacing.md,
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    padding: spacing.sm,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 4,
-    width: 150,
-  },
-  moreOptionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-  },
-  moreOptionText: {
-    marginLeft: spacing.sm,
-    color: colors.gray[700],
-    fontWeight: '500',
-  },
-  contentContainer: {
-    padding: spacing.lg,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.gray[800],
-    marginBottom: spacing.sm,
-  },
-  metaContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: spacing.md,
-  },
-  metaItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: spacing.md,
-    marginBottom: spacing.xs,
-  },
-  metaText: {
-    fontSize: 14,
-    color: colors.gray[600],
-    marginLeft: 4,
-  },
-  authorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[200],
-    borderTopWidth: 1,
-    borderTopColor: colors.gray[200],
-    marginBottom: spacing.md,
-  },
-  authorAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-  },
-  authorInfo: {
-    marginLeft: spacing.sm,
-  },
-  authorName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.gray[800],
-  },
-  authorLocation: {
-    fontSize: 14,
-    color: colors.gray[600],
-  },
-  storyContent: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: colors.gray[700],
-    marginBottom: spacing.lg,
-  },
-  mapContainer: {
-    height: 200,
-    marginBottom: spacing.lg,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  map: {
-    height: '100%',
-    width: '100%',
-  },
-  imageGalleryContainer: {
-    paddingBottom: spacing.sm,
-  },
-  galleryImage: {
-    width: 160,
-    height: 120,
-    borderRadius: 8,
-    marginRight: spacing.sm,
-  },
-  interactionBar: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderTopColor: colors.gray[200],
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[200],
-    paddingVertical: spacing.md,
-    marginBottom: spacing.lg,
-  },
-  interactionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: spacing.xl,
-  },
-  interactionText: {
-    marginLeft: spacing.xs,
-    color: colors.gray[600],
-    fontWeight: '500',
-  },
-  commentsSection: {
-    marginTop: spacing.sm,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.gray[800],
-    marginBottom: spacing.md,
-  },
-  commentsLoading: {
-    paddingVertical: spacing.lg,
-  },
-  noCommentsText: {
-    textAlign: 'center',
-    paddingVertical: spacing.lg,
-    color: colors.gray[500],
-  },
-});
+export default StoryDetail;

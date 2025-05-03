@@ -1,3 +1,5 @@
+//app/trip/[id].jsx
+
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -11,7 +13,7 @@ import Card from '../../components/ui/Card';
 
 const TripDetail = () => {
   const { id } = useLocalSearchParams();
-  const { theme } = useTheme();
+  const theme = useTheme();
   const { user } = useAuth();
   const router = useRouter();
   
@@ -243,7 +245,9 @@ const TripDetail = () => {
       </View>
     </View>
   );
-};
+}
+
+export default TripDetail;
 
 const styles = StyleSheet.create({
   container: {
@@ -384,5 +388,3 @@ const styles = StyleSheet.create({
     marginTop: 16,
   }
 });
-
-export default TripDetail;

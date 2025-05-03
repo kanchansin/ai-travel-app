@@ -7,6 +7,9 @@
     ],
     "name": "ai-travel-app",
     "slug": "ai-travel-app",
-    "newArchEnabled": true
+    "newArchEnabled": true,
+    "android": {
+      "package": "com.kanchansinghh.aitravelapp"
+    }
   }
 }

@@ -6,13 +6,14 @@ import { StatusBar } from 'expo-status-bar';
 import { Search, X, Compass, MapPin } from 'lucide-react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { colors, spacing } from '../../constants/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 import { searchPlaces, getPlaceDetails } from '../../services/mapbox';
 
 const { width } = Dimensions.get('window');
 
 export default function Explore() {
   const router = useRouter();
+  const { theme } = useTheme(); // Get theme from context
   const mapRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -113,48 +114,130 @@ export default function Explore() {
       style={styles.searchResultItem}
       onPress={() => handleSelectPlace(item)}
     >
-      <MapPin size={18} color={colors.gray[600]} />
+      <MapPin size={18} color={theme.colors.textLight} />
       <View style={styles.searchResultTextContainer}>
-        <Text style={styles.searchResultTitle} numberOfLines={1}>
+        <Text style={[styles.searchResultTitle, { color: theme.colors.text }]} numberOfLines={1}>
           {item.text}
         </Text>
-        <Text style={styles.searchResultSubtitle} numberOfLines={1}>
+        <Text style={[styles.searchResultSubtitle, { color: theme.colors.textLight }]} numberOfLines={1}>
           {item.place_name.replace(`${item.text}, `, '')}
         </Text>
       </View>
     </TouchableOpacity>
   );
 
+  // Create styles using the theme
+  const themedStyles = {
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    searchContainer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      zIndex: 10,
+      padding: theme.sizes.md,
+    },
+    searchInputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.background,
+      borderRadius: 8,
+      paddingHorizontal: theme.sizes.md,
+      height: 48,
+      ...theme.shadows.small,
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: theme.fonts.sizes.md,
+      color: theme.colors.text,
+    },
+    searchResultsContainer: {
+      backgroundColor: theme.colors.background,
+      borderRadius: 8,
+      marginTop: theme.sizes.xs,
+      maxHeight: 300,
+      ...theme.shadows.small,
+    },
+    currentLocationButton: {
+      position: 'absolute',
+      bottom: 100,
+      right: theme.sizes.md,
+      backgroundColor: theme.colors.background,
+      width: 44,
+      height: 44,
+      borderRadius: 22,
+      justifyContent: 'center',
+      alignItems: 'center',
+      ...theme.shadows.medium,
+    },
+    placeCard: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: theme.colors.background,
+      padding: theme.sizes.lg,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      ...theme.shadows.medium,
+    },
+    placeCardTitle: {
+      fontSize: theme.fonts.sizes.lg,
+      fontWeight: '700',
+      color: theme.colors.text,
+      flex: 1,
+    },
+    placeCardAddress: {
+      fontSize: theme.fonts.sizes.sm,
+      color: theme.colors.textLight,
+      marginBottom: theme.sizes.lg,
+    },
+    exploreButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: 8,
+      paddingVertical: theme.sizes.md,
+      alignItems: 'center',
+    },
+    exploreButtonText: {
+      color: '#FFFFFF', // White is typically safe across light/dark themes for buttons
+      fontWeight: '600',
+      fontSize: theme.fonts.sizes.md,
+    },
+  };
+
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar style="dark" />
+    <SafeAreaView style={themedStyles.container} edges={['top']}>
+      <StatusBar style="auto" /> {/* Auto will adapt to theme */}
       
-      <View style={styles.searchContainer}>
-        <View style={styles.searchInputContainer}>
-          <Search size={20} color={colors.gray[500]} style={styles.searchIcon} />
+      <View style={themedStyles.searchContainer}>
+        <View style={themedStyles.searchInputContainer}>
+          <Search size={20} color={theme.colors.textLight} style={{ marginRight: theme.sizes.sm }} />
           <TextInput
-            style={styles.searchInput}
+            style={themedStyles.searchInput}
             placeholder="Search destinations..."
             value={searchQuery}
             onChangeText={handleSearch}
-            placeholderTextColor={colors.gray[400]}
+            placeholderTextColor={theme.colors.textLight}
           />
           {searchQuery.length > 0 && (
             <TouchableOpacity onPress={clearSearch}>
-              <X size={18} color={colors.gray[500]} />
+              <X size={18} color={theme.colors.textLight} />
             </TouchableOpacity>
           )}
         </View>
         
         {searchResults.length > 0 && (
-          <View style={styles.searchResultsContainer}>
+          <View style={themedStyles.searchResultsContainer}>
             <FlatList
               data={searchResults}
               renderItem={renderSearchResult}
               keyExtractor={(item) => item.id}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled"
-              style={styles.searchResultsList}
+              style={{ padding: theme.sizes.sm }}
             />
           </View>
         )}
@@ -182,7 +265,7 @@ export default function Explore() {
       
       {userLocation && !selectedPlace && (
         <TouchableOpacity 
-          style={styles.currentLocationButton}
+          style={themedStyles.currentLocationButton}
           onPress={() => {
             mapRef.current?.animateToRegion({
               latitude: userLocation.latitude,
@@ -192,13 +275,13 @@ export default function Explore() {
             }, 1000);
           }}
         >
-          <Compass size={24} color={colors.primary} />
+          <Compass size={24} color={theme.colors.primary} />
         </TouchableOpacity>
       )}
       
       <Animated.View 
         style={[
-          styles.placeCard,
+          themedStyles.placeCard,
           {
             transform: [
               {
@@ -214,24 +297,24 @@ export default function Explore() {
       >
         {selectedPlace && (
           <>
-            <View style={styles.placeCardHeader}>
-              <Text style={styles.placeCardTitle} numberOfLines={1}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: theme.sizes.sm }}>
+              <Text style={themedStyles.placeCardTitle} numberOfLines={1}>
                 {selectedPlace.text}
               </Text>
               <TouchableOpacity onPress={closeSelectedPlace}>
-                <X size={20} color={colors.gray[600]} />
+                <X size={20} color={theme.colors.textLight} />
               </TouchableOpacity>
             </View>
             
-            <Text style={styles.placeCardAddress} numberOfLines={2}>
+            <Text style={themedStyles.placeCardAddress} numberOfLines={2}>
               {selectedPlace.place_name}
             </Text>
             
             <TouchableOpacity 
-              style={styles.exploreButton}
+              style={themedStyles.exploreButton}
               onPress={navigateToPlaceDetails}
             >
-              <Text style={styles.exploreButtonText}>Explore this destination</Text>
+              <Text style={themedStyles.exploreButtonText}>Explore this destination</Text>
             </TouchableOpacity>
           </>
         )}
@@ -240,135 +323,28 @@ export default function Explore() {
   );
 }
 
+// Keep some styles that don't need theming
 const styles = StyleSheet.create({
-  container: {
+  map: {
     flex: 1,
-    backgroundColor: colors.background,
-  },
-  searchContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    padding: spacing.md,
-  },
-  searchInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    paddingHorizontal: spacing.md,
-    height: 48,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  searchIcon: {
-    marginRight: spacing.sm,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: colors.gray[800],
-  },
-  searchResultsContainer: {
-    backgroundColor: colors.white,
-    borderRadius: 8,
-    marginTop: spacing.xs,
-    maxHeight: 300,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  searchResultsList: {
-    padding: spacing.sm,
   },
   searchResultItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.sm,
+    paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: colors.gray[100],
+    borderBottomColor: 'rgba(0,0,0,0.05)',
   },
   searchResultTextContainer: {
-    marginLeft: spacing.sm,
+    marginLeft: 8,
     flex: 1,
   },
   searchResultTitle: {
     fontSize: 16,
     fontWeight: '500',
-    color: colors.gray[800],
   },
   searchResultSubtitle: {
     fontSize: 14,
-    color: colors.gray[600],
     marginTop: 2,
-  },
-  map: {
-    flex: 1,
-  },
-  currentLocationButton: {
-    position: 'absolute',
-    bottom: 100,
-    right: spacing.md,
-    backgroundColor: colors.white,
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  placeCard: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: colors.white,
-    padding: spacing.lg,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 10,
-  },
-  placeCardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  placeCardTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.gray[800],
-    flex: 1,
-  },
-  placeCardAddress: {
-    fontSize: 14,
-    color: colors.gray[600],
-    marginBottom: spacing.lg,
-  },
-  exploreButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    paddingVertical: spacing.md,
-    alignItems: 'center',
-  },
-  exploreButtonText: {
-    color: colors.white,
-    fontWeight: '600',
-    fontSize: 16,
   },
 });

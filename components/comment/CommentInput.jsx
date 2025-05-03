@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   View, 
   TextInput, 
@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Keyboard
 } from 'react-native';
-import { colors, spacing } from '../../constants/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Send } from 'lucide-react-native';
 
 const CommentInput = ({ 
@@ -14,6 +14,7 @@ const CommentInput = ({
   placeholder = 'Add a comment...',
   replyTo = null
 }) => {
+  const { theme } = useTheme();
   const [text, setText] = useState('');
   
   const handleSubmit = () => {
@@ -23,13 +24,47 @@ const CommentInput = ({
       Keyboard.dismiss();
     }
   };
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      marginBottom: theme.spacing.md,
+    },
+    input: {
+      flex: 1,
+      minHeight: 40,
+      maxHeight: 120,
+      backgroundColor: theme.colors.gray[100],
+      borderRadius: 20,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      paddingRight: 50,
+      color: theme.colors.gray[800],
+      fontSize: 14,
+    },
+    sendButton: {
+      position: 'absolute',
+      right: 4,
+      bottom: 4,
+      backgroundColor: theme.colors.primary,
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    sendButtonDisabled: {
+      backgroundColor: theme.colors.gray[300],
+    },
+  }), [theme]);
   
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
         placeholder={replyTo ? `Reply to ${replyTo}...` : placeholder}
-        placeholderTextColor={colors.gray[500]}
+        placeholderTextColor={theme.colors.gray[500]}
         value={text}
         onChangeText={setText}
         multiline
@@ -46,45 +81,11 @@ const CommentInput = ({
       >
         <Send 
           size={20} 
-          color={text.trim() ? colors.white : colors.gray[400]} 
+          color={text.trim() ? theme.colors.white : theme.colors.gray[400]} 
         />
       </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    marginBottom: spacing.md,
-  },
-  input: {
-    flex: 1,
-    minHeight: 40,
-    maxHeight: 120,
-    backgroundColor: colors.gray[100],
-    borderRadius: 20,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    paddingRight: 50,
-    color: colors.gray[800],
-    fontSize: 14,
-  },
-  sendButton: {
-    position: 'absolute',
-    right: 4,
-    bottom: 4,
-    backgroundColor: colors.primary,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sendButtonDisabled: {
-    backgroundColor: colors.gray[300],
-  },
-});
 
 export default CommentInput;

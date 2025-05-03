@@ -8,7 +8,7 @@ import { registerUser } from '../../services/auth';
 import { useAuth } from '../../hooks/useAuth';
 
 export default function Register() {
-  const { colors } = useTheme();
+  const { theme } = useTheme();
   const router = useRouter();
   const { setUser } = useAuth();
   
@@ -56,15 +56,15 @@ export default function Register() {
   };
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: colors.background }]}>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.formContainer}>
-        <Text style={[styles.title, { color: colors.text }]}>Create Account</Text>
-        <Text style={[styles.subtitle, { color: colors.textLight }]}>
+        <Text style={[styles.title, { color: theme.colors.text }]}>Create Account</Text>
+        <Text style={[styles.subtitle, { color: theme.colors.textLight }]}>
           Join AI Travel Planner to create personalized trips
         </Text>
         
         {error ? (
-          <Text style={[styles.errorText, { backgroundColor: colors.errorLight }]}>{error}</Text>
+          <Text style={[styles.errorText, { backgroundColor: theme.colors.errorLight }]}>{error}</Text>
         ) : null}
         
         <Input
@@ -108,10 +108,10 @@ export default function Register() {
         />
         
         <View style={styles.linkContainer}>
-          <Text style={{ color: colors.textLight }}>Already have an account?</Text>
+          <Text style={{ color: theme.colors.textLight }}>Already have an account?</Text>
           <Link href="/login" asChild>
             <TouchableOpacity>
-              <Text style={[styles.link, { color: colors.accent }]}>Login</Text>
+              <Text style={[styles.link, { color: theme.colors.accent }]}>Login</Text>
             </TouchableOpacity>
           </Link>
         </View>

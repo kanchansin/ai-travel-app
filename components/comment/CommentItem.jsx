@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { 
   View, 
   Text, 
@@ -6,7 +6,7 @@ import {
   Image, 
   TouchableOpacity 
 } from 'react-native';
-import { colors, spacing } from '../../constants/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Heart } from 'lucide-react-native';
 
 const CommentItem = ({ 
@@ -14,6 +14,8 @@ const CommentItem = ({
   onReply, 
   onLike 
 }) => {
+  const { theme } = useTheme();
+
   if (!comment) return null;
   
   const {
@@ -43,7 +45,58 @@ const CommentItem = ({
       return date.toLocaleDateString('en-US');
     }
   };
-  
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      marginBottom: theme.spacing.md,
+    },
+    avatar: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+    },
+    contentContainer: {
+      flex: 1,
+      marginLeft: theme.spacing.sm,
+    },
+    headerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 2,
+    },
+    userName: {
+      fontWeight: '600',
+      color: theme.colors.gray[800],
+      fontSize: 14,
+    },
+    timestamp: {
+      fontSize: 12,
+      color: theme.colors.gray[500],
+    },
+    commentText: {
+      color: theme.colors.gray[700],
+      fontSize: 14,
+      lineHeight: 20,
+      marginBottom: 4,
+    },
+    actionsContainer: {
+      flexDirection: 'row',
+      marginTop: 2,
+    },
+    actionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginRight: theme.spacing.md,
+    },
+    actionText: {
+      fontSize: 12,
+      color: theme.colors.gray[500],
+      marginLeft: 4,
+    },
+  }), [theme]);
+
   return (
     <View style={styles.container}>
       <Image 
@@ -68,13 +121,13 @@ const CommentItem = ({
           >
             <Heart 
               size={16} 
-              color={isLiked ? colors.error : colors.gray[500]} 
-              fill={isLiked ? colors.error : 'transparent'} 
+              color={isLiked ? theme.colors.error : theme.colors.gray[500]} 
+              fill={isLiked ? theme.colors.error : 'transparent'} 
             />
             {likes > 0 && (
               <Text style={[
                 styles.actionText,
-                isLiked && { color: colors.error }
+                isLiked && { color: theme.colors.error }
               ]}>
                 {likes}
               </Text>
@@ -92,56 +145,5 @@ const CommentItem = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    marginBottom: spacing.md,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  contentContainer: {
-    flex: 1,
-    marginLeft: spacing.sm,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  userName: {
-    fontWeight: '600',
-    color: colors.gray[800],
-    fontSize: 14,
-  },
-  timestamp: {
-    fontSize: 12,
-    color: colors.gray[500],
-  },
-  commentText: {
-    color: colors.gray[700],
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 4,
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    marginTop: 2,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: spacing.md,
-  },
-  actionText: {
-    fontSize: 12,
-    color: colors.gray[500],
-    marginLeft: 4,
-  },
-});
 
 export default CommentItem;

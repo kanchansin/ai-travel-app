@@ -397,7 +397,9 @@ const CreateTrip = () => {
       />
     </ScrollView>
   );
-};
+}
+
+export default CreateTrip;
 
 const styles = StyleSheet.create({
   container: {
@@ -568,5 +570,3 @@ const styles = StyleSheet.create({
     marginTop: 8,
   }
 });
-
-export default CreateTrip;

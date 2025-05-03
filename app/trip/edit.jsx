@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   View, 
   Text, 
@@ -33,7 +33,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { getTripById, updateTrip, uploadTripImage } from '../../services/trips';
 import Button from '../../components/ui/Button';
-import { colors, spacing } from '../../constants/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 import MapSelector from '../../components/map/MapSelector';
 import TagSelector from '../../components/ui/TagSelector';
 
@@ -44,6 +44,17 @@ const ACTIVITY_TYPES = [
   "Sightseeing", "Food", "Adventure", "Relaxation", 
   "Culture", "Nightlife", "Shopping", "Nature"
 ];
+
+// Fallback spacing object
+const DEFAULT_SPACING = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 40,
+  layout: 16,
+};
 
 export default function EditTrip() {
   const { id } = useLocalSearchParams();
@@ -66,6 +77,10 @@ export default function EditTrip() {
   const [budget, setBudget] = useState('Moderate');
   const [activities, setActivities] = useState([]);
   const [notes, setNotes] = useState('');
+  const { theme } = useTheme();
+
+  // Debug theme to check its structure
+  console.log('Theme in EditTrip:', JSON.stringify(theme, null, 2));
   
   // Date picker states
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
@@ -172,7 +187,7 @@ export default function EditTrip() {
       console.error('Error updating trip:', error);
       Alert.alert('Error', 'Failed to update trip. Please try again.');
     } finally {
-      setSaving(false);
+      setReturning(false);
     }
   };
   
@@ -299,12 +314,195 @@ export default function EditTrip() {
       ))}
     </View>
   );
+
+  const styles = useMemo(() => {
+    // Ensure spacing is always defined
+    const spacing = theme?.spacing || DEFAULT_SPACING;
+
+    console.log('Spacing in useMemo:', spacing);
+
+    return StyleSheet.create({
+      container: {
+        flex: 1,
+        backgroundColor: theme?.colors?.background || '#FFFFFF',
+      },
+      loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      header: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+        borderBottomWidth: 1,
+        borderBottomColor: theme?.colors?.gray?.[200] || '#EDF2F7',
+      },
+      backButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme?.colors?.gray?.[100] || '#F7FAFC',
+      },
+      headerTitle: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: theme?.colors?.gray?.[800] || '#2D3748',
+      },
+      saveButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme?.colors?.primary || '#191970',
+      },
+      saveButtonDisabled: {
+        opacity: 0.7,
+      },
+      scrollContent: {
+        padding: spacing.lg,
+        paddingBottom: spacing.xl * 2,
+      },
+      imageContainer: {
+        position: 'relative',
+        height: 200,
+        borderRadius: 12,
+        overflow: 'hidden',
+        marginBottom: spacing.lg,
+      },
+      tripImage: {
+        width: '100%',
+        height: '100%',
+      },
+      imagePlaceholder: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: theme?.colors?.gray?.[200] || '#EDF2F7',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      imagePlaceholderText: {
+        marginTop: spacing.xs,
+        color: theme?.colors?.gray?.[500] || '#A0AEC0',
+        fontWeight: '500',
+      },
+      editImageButton: {
+        position: 'absolute',
+        bottom: spacing.sm,
+        right: spacing.sm,
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: theme?.colors?.primary || '#191970',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      inputGroup: {
+        marginBottom: spacing.lg,
+      },
+      label: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: theme?.colors?.gray?.[700] || '#4A5568',
+        marginBottom: spacing.xs,
+      },
+      input: {
+        backgroundColor: theme?.colors?.white || '#FFFFFF',
+        borderWidth: 1,
+        borderColor: theme?.colors?.gray?.[300] || '#E2E8F0',
+        borderRadius: 8,
+        padding: spacing.md,
+        fontSize: 16,
+        color: theme?.colors?.gray?.[800] || '#2D3748',
+      },
+      textArea: {
+        minHeight: 100,
+        textAlignVertical: 'top',
+      },
+      locationSelector: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: theme?.colors?.white || '#FFFFFF',
+        borderWidth: 1,
+        borderColor: theme?.colors?.gray?.[300] || '#E2E8F0',
+        borderRadius: 8,
+        padding: spacing.md,
+      },
+      locationText: {
+        marginLeft: spacing.sm,
+        fontSize: 16,
+        color: theme?.colors?.gray?.[800] || '#2D3748',
+      },
+      dateContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: spacing.lg,
+      },
+      dateInputGroup: {
+        width: '48%',
+      },
+      dateSelector: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: theme?.colors?.white || '#FFFFFF',
+        borderWidth: 1,
+        borderColor: theme?.colors?.gray?.[300] || '#E2E8F0',
+        borderRadius: 8,
+        padding: spacing.md,
+      },
+      dateText: {
+        marginLeft: spacing.sm,
+        fontSize: 14,
+        color: theme?.colors?.gray?.[800] || '#2D3748',
+      },
+      tripTypeSection: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: spacing.sm,
+      },
+      sectionText: {
+        marginLeft: spacing.sm,
+        fontSize: 14,
+        color: theme?.colors?.gray?.[600] || '#718096',
+      },
+      selectorContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+      },
+      selectorItem: {
+        backgroundColor: theme?.colors?.gray?.[100] || '#F7FAFC',
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+        borderRadius: 20,
+        marginRight: spacing.sm,
+        marginBottom: spacing.sm,
+      },
+      selectorItemActive: {
+        backgroundColor: theme?.colors?.primary || '#191970',
+      },
+      selectorText: {
+        color: theme?.colors?.gray?.[700] || '#4A5568',
+        fontWeight: '500',
+      },
+      selectorTextActive: {
+        color: theme?.colors?.white || '#FFFFFF',
+      },
+      saveChangesButton: {
+        marginTop: spacing.md,
+      },
+    });
+  }, [theme, tripType, budget]);
   
   if (loading) {
     return (
       <SafeAreaView style={styles.loadingContainer}>
         <StatusBar style="dark" />
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={theme?.colors?.primary || '#191970'} />
       </SafeAreaView>
     );
   }
@@ -325,7 +523,7 @@ export default function EditTrip() {
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <ArrowLeft size={24} color={colors.gray[700]} />
+          <ArrowLeft size={24} color={theme?.colors?.gray?.[700] || '#4A5568'} />
         </TouchableOpacity>
         
         <Text style={styles.headerTitle}>Edit Trip</Text>
@@ -336,9 +534,9 @@ export default function EditTrip() {
           disabled={saving}
         >
           {saving ? (
-            <ActivityIndicator size="small" color={colors.white} />
+            <ActivityIndicator size="small" color={theme?.colors?.white || '#FFFFFF'} />
           ) : (
-            <Save size={20} color={colors.white} />
+            <Save size={20} color={theme?.colors?.white || '#FFFFFF'} />
           )}
         </TouchableOpacity>
       </View>
@@ -364,7 +562,7 @@ export default function EditTrip() {
               />
             ) : (
               <View style={styles.imagePlaceholder}>
-                <Camera size={40} color={colors.gray[400]} />
+                <Camera size={40} color={theme?.colors?.gray?.[400] || '#CBD5E0'} />
                 <Text style={styles.imagePlaceholderText}>
                   Add Trip Photo
                 </Text>
@@ -372,7 +570,7 @@ export default function EditTrip() {
             )}
             
             <View style={styles.editImageButton}>
-              <Camera size={18} color={colors.white} />
+              <Camera size={18} color={theme?.colors?.white || '#FFFFFF'} />
             </View>
           </TouchableOpacity>
           
@@ -384,7 +582,7 @@ export default function EditTrip() {
               value={title}
               onChangeText={setTitle}
               placeholder="Enter trip title"
-              placeholderTextColor={colors.gray[400]}
+              placeholderTextColor={theme?.colors?.gray?.[400] || '#CBD5E0'}
             />
           </View>
           
@@ -396,7 +594,7 @@ export default function EditTrip() {
               value={description}
               onChangeText={setDescription}
               placeholder="Describe your trip (optional)"
-              placeholderTextColor={colors.gray[400]}
+              placeholderTextColor={theme?.colors?.gray?.[400] || '#CBD5E0'}
               multiline
               numberOfLines={4}
             />
@@ -409,7 +607,7 @@ export default function EditTrip() {
               style={styles.locationSelector}
               onPress={() => setShowMapSelector(true)}
             >
-              <MapPin size={20} color={colors.primary} />
+              <MapPin size={20} color={theme?.colors?.primary || '#191970'} />
               <Text style={styles.locationText}>
                 {location || 'Select location'}
               </Text>
@@ -425,7 +623,7 @@ export default function EditTrip() {
                 style={styles.dateSelector}
                 onPress={() => setShowStartDatePicker(true)}
               >
-                <Calendar size={20} color={colors.primary} />
+                <Calendar size={20} color={theme?.colors?.primary || '#191970'} />
                 <Text style={styles.dateText}>{formatDate(startDate)}</Text>
               </TouchableOpacity>
             </View>
@@ -437,7 +635,7 @@ export default function EditTrip() {
                 style={styles.dateSelector}
                 onPress={() => setShowEndDatePicker(true)}
               >
-                <Calendar size={20} color={colors.primary} />
+                <Calendar size={20} color={theme?.colors?.primary || '#191970'} />
                 <Text style={styles.dateText}>{formatDate(endDate)}</Text>
               </TouchableOpacity>
             </View>
@@ -447,7 +645,7 @@ export default function EditTrip() {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Trip Type</Text>
             <View style={styles.tripTypeSection}>
-              <Users size={20} color={colors.primary} />
+              <Users size={20} color={theme?.colors?.primary || '#191970'} />
               <Text style={styles.sectionText}>Who's going?</Text>
             </View>
             <TripTypeSelector />
@@ -457,7 +655,7 @@ export default function EditTrip() {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Budget</Text>
             <View style={styles.tripTypeSection}>
-              <DollarSign size={20} color={colors.primary} />
+              <DollarSign size={20} color={theme?.colors?.primary || '#191970'} />
               <Text style={styles.sectionText}>What's your budget?</Text>
             </View>
             <BudgetSelector />
@@ -467,7 +665,7 @@ export default function EditTrip() {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Activities</Text>
             <View style={styles.tripTypeSection}>
-              <Tag size={20} color={colors.primary} />
+              <Tag size={20} color={theme?.colors?.primary || '#191970'} />
               <Text style={styles.sectionText}>What do you want to do?</Text>
             </View>
             <TagSelector
@@ -491,7 +689,7 @@ export default function EditTrip() {
               value={notes}
               onChangeText={setNotes}
               placeholder="Any additional notes? (optional)"
-              placeholderTextColor={colors.gray[400]}
+              placeholderTextColor={theme?.colors?.gray?.[400] || '#CBD5E0'}
               multiline
               numberOfLines={4}
             />
@@ -541,179 +739,3 @@ export default function EditTrip() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.gray[200],
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.gray[100],
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.gray[800],
-  },
-  saveButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: colors.primary,
-  },
-  saveButtonDisabled: {
-    opacity: 0.7,
-  },
-  scrollContent: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xl * 2,
-  },
-  imageContainer: {
-    position: 'relative',
-    height: 200,
-    borderRadius: 12,
-    overflow: 'hidden',
-    marginBottom: spacing.lg,
-  },
-  tripImage: {
-    width: '100%',
-    height: '100%',
-  },
-  imagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: colors.gray[200],
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  imagePlaceholderText: {
-    marginTop: spacing.xs,
-    color: colors.gray[500],
-    fontWeight: '500',
-  },
-  editImageButton: {
-    position: 'absolute',
-    bottom: spacing.sm,
-    right: spacing.sm,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  inputGroup: {
-    marginBottom: spacing.lg,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.gray[700],
-    marginBottom: spacing.xs,
-  },
-  input: {
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray[300],
-    borderRadius: 8,
-    padding: spacing.md,
-    fontSize: 16,
-    color: colors.gray[800],
-  },
-  textArea: {
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
-  locationSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray[300],
-    borderRadius: 8,
-    padding: spacing.md,
-  },
-  locationText: {
-    marginLeft: spacing.sm,
-    fontSize: 16,
-    color: colors.gray[800],
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: spacing.lg,
-  },
-  dateInputGroup: {
-    width: '48%',
-  },
-  dateSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray[300],
-    borderRadius: 8,
-    padding: spacing.md,
-  },
-  dateText: {
-    marginLeft: spacing.sm,
-    fontSize: 14,
-    color: colors.gray[800],
-  },
-  tripTypeSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  sectionText: {
-    marginLeft: spacing.sm,
-    fontSize: 14,
-    color: colors.gray[600],
-  },
-  selectorContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  selectorItem: {
-    backgroundColor: colors.gray[100],
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: 20,
-    marginRight: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-  selectorItemActive: {
-    backgroundColor: colors.primary,
-  },
-  selectorText: {
-    color: colors.gray[700],
-    fontWeight: '500',
-  },
-  selectorTextActive: {
-    color: colors.white,
-  },
-  saveChangesButton: {
-    marginTop: spacing.md,
-  },
-});

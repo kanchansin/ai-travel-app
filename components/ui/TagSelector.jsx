@@ -5,7 +5,7 @@ import {
   StyleSheet, 
   TouchableOpacity 
 } from 'react-native';
-import { colors, spacing } from '../../constants/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 import { Check } from 'lucide-react-native';
 
 const TagSelector = ({ 
@@ -15,6 +15,8 @@ const TagSelector = ({
   maxSelection = 10,
   disabled = false
 }) => {
+  const { theme } = useTheme();
+
   const handleSelect = (item) => {
     if (disabled) return;
     
@@ -55,7 +57,7 @@ const TagSelector = ({
             {isSelected && (
               <Check 
                 size={14} 
-                color={colors.white} 
+                color={theme.colors.white} 
                 style={styles.checkIcon} 
               />
             )}
@@ -82,15 +84,15 @@ const styles = StyleSheet.create({
   tag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.gray[100],
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    backgroundColor: theme.colors.gray[100],
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
     borderRadius: 20,
-    marginRight: spacing.sm,
-    marginBottom: spacing.sm,
+    marginRight: theme.spacing.sm,
+    marginBottom: theme.spacing.sm,
   },
   tagSelected: {
-    backgroundColor: colors.primary,
+    backgroundColor: theme.colors.primary,
   },
   tagDisabled: {
     opacity: 0.6,
@@ -99,11 +101,11 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   tagText: {
-    color: colors.gray[700],
+    color: theme.colors.gray[700],
     fontWeight: '500',
   },
   tagTextSelected: {
-    color: colors.white,
+    color: theme.colors.white,
   },
 });
 

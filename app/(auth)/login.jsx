@@ -1,17 +1,15 @@
-// app/(auth)/login.jsx
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../contexts/ThemeContext';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
-import { SIZES, FONTS } from '../../constants/theme';
 import { Feather } from '@expo/vector-icons';
 import { loginUser } from '../../services/firebase';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -57,40 +55,115 @@ export default function LoginScreen() {
     router.push('/forgot-password');
   };
 
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flexGrow: 1,
+      padding: theme.spacing.layout,
+      justifyContent: 'center',
+      backgroundColor: theme.colors.background,
+    },
+    logoContainer: {
+      alignItems: 'center',
+      marginBottom: theme.spacing.xl,
+    },
+    logo: {
+      width: 80,
+      height: 80,
+      marginBottom: theme.spacing.sm,
+    },
+    appName: {
+      ...theme.fonts.bold,
+      fontSize: theme.fonts.sizes.lg,
+      color: theme.colors.primary,
+    },
+    formContainer: {
+      width: '100%',
+    },
+    title: {
+      ...theme.fonts.bold,
+      fontSize: theme.fonts.sizes.xl,
+      marginBottom: theme.spacing.xs,
+      color: theme.colors.text,
+    },
+    subtitle: {
+      ...theme.fonts.regular,
+      fontSize: theme.fonts.sizes.md,
+      marginBottom: theme.spacing.lg,
+      color: theme.colors.textLight,
+    },
+    errorContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing.md,
+      borderRadius: 8,
+      marginBottom: theme.spacing.md,
+      backgroundColor: theme.colors.accent + '20',
+    },
+    errorText: {
+      ...theme.fonts.medium,
+      fontSize: theme.fonts.sizes.sm,
+      marginLeft: theme.spacing.xs,
+      color: theme.colors.accent,
+    },
+    forgotPasswordContainer: {
+      alignSelf: 'flex-end',
+      marginBottom: theme.spacing.lg,
+    },
+    forgotPasswordText: {
+      ...theme.fonts.medium,
+      fontSize: theme.fonts.sizes.sm,
+      color: theme.colors.primary,
+    },
+    loginButton: {
+      marginTop: theme.spacing.sm,
+    },
+    registerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginTop: theme.spacing.xl,
+    },
+    registerText: {
+      ...theme.fonts.regular,
+      fontSize: theme.fonts.sizes.md,
+      color: theme.colors.textLight,
+    },
+    registerLink: {
+      ...theme.fonts.bold,
+      fontSize: theme.fonts.sizes.md,
+      marginLeft: theme.spacing.xs,
+      color: theme.colors.primary,
+    },
+  }), [theme]);
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        contentContainerStyle={[
-          styles.container,
-          { backgroundColor: colors.background }
-        ]}
-      >
+      <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.logoContainer}>
           <Image
             source={require('../../assets/images/logo.png')}
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={[styles.appName, { color: colors.primary }]}>
+          <Text style={styles.appName}>
             AI Travel Planner
           </Text>
         </View>
 
         <View style={styles.formContainer}>
-          <Text style={[styles.title, { color: colors.text }]}>
+          <Text style={styles.title}>
             Welcome Back
           </Text>
-          <Text style={[styles.subtitle, { color: colors.textLight }]}>
+          <Text style={styles.subtitle}>
             Sign in to your account to continue
           </Text>
 
           {error ? (
-            <View style={[styles.errorContainer, { backgroundColor: colors.accent + '20' }]}>
-              <Feather name="alert-circle" size={18} color={colors.accent} />
-              <Text style={[styles.errorText, { color: colors.accent }]}>
+            <View style={styles.errorContainer}>
+              <Feather name="alert-circle" size={18} color={theme.colors.accent} />
+              <Text style={styles.errorText}>
                 {error}
               </Text>
             </View>
@@ -102,7 +175,7 @@ export default function LoginScreen() {
             onChangeText={setEmail}
             placeholder="Your email address"
             keyboardType="email-address"
-            leftIcon={<Feather name="mail" size={18} color={colors.neutral} />}
+            leftIcon={<Feather name="mail" size={18} color={theme.colors.neutral} />}
           />
 
           <Input
@@ -111,14 +184,14 @@ export default function LoginScreen() {
             onChangeText={setPassword}
             placeholder="Your password"
             secureTextEntry
-            leftIcon={<Feather name="lock" size={18} color={colors.neutral} />}
+            leftIcon={<Feather name="lock" size={18} color={theme.colors.neutral} />}
           />
 
           <TouchableOpacity
             onPress={handleForgotPassword}
             style={styles.forgotPasswordContainer}
           >
-            <Text style={[styles.forgotPasswordText, { color: colors.primary }]}>
+            <Text style={styles.forgotPasswordText}>
               Forgot Password?
             </Text>
           </TouchableOpacity>
@@ -132,11 +205,11 @@ export default function LoginScreen() {
           />
 
           <View style={styles.registerContainer}>
-            <Text style={[styles.registerText, { color: colors.textLight }]}>
+            <Text style={styles.registerText}>
               Don't have an account?
             </Text>
             <TouchableOpacity onPress={navigateToRegister}>
-              <Text style={[styles.registerLink, { color: colors.primary }]}>
+              <Text style={styles.registerLink}>
                 Sign Up
               </Text>
             </TouchableOpacity>
@@ -146,74 +219,3 @@ export default function LoginScreen() {
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: SIZES.layout,
-    justifyContent: 'center',
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginBottom: SIZES.xl,
-  },
-  logo: {
-    width: 80,
-    height: 80,
-    marginBottom: SIZES.sm,
-  },
-  appName: {
-    ...FONTS.bold,
-    fontSize: FONTS.sizes.lg,
-  },
-  formContainer: {
-    width: '100%',
-  },
-  title: {
-    ...FONTS.bold,
-    fontSize: FONTS.sizes.xl,
-    marginBottom: SIZES.xs,
-  },
-  subtitle: {
-    ...FONTS.regular,
-    fontSize: FONTS.sizes.md,
-    marginBottom: SIZES.lg,
-  },
-  errorContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: SIZES.md,
-    borderRadius: 8,
-    marginBottom: SIZES.md,
-  },
-  errorText: {
-    ...FONTS.medium,
-    fontSize: FONTS.sizes.sm,
-    marginLeft: SIZES.xs,
-  },
-  forgotPasswordContainer: {
-    alignSelf: 'flex-end',
-    marginBottom: SIZES.lg,
-  },
-  forgotPasswordText: {
-    ...FONTS.medium,
-    fontSize: FONTS.sizes.sm,
-  },
-  loginButton: {
-    marginTop: SIZES.sm,
-  },
-  registerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: SIZES.xl,
-  },
-  registerText: {
-    ...FONTS.regular,
-    fontSize: FONTS.sizes.md,
-  },
-  registerLink: {
-    ...FONTS.bold,
-    fontSize: FONTS.sizes.md,
-    marginLeft: SIZES.xs,
-  },
-});

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, FlatList, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import TripCard from './TripCard';
-import { useTheme } from '../../context/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const TripList = ({ 
   trips, 

@@ -38,7 +38,7 @@ export default function RootLayout() {
             <Stack.Screen name="onboarding" options={{ gestureEnabled: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="trip" options={{ headerShown: false }} />
+            <Stack.Screen name="trips" options={{ headerShown: false }} />
             <Stack.Screen name="story" options={{ headerShown: false }} />
           </Stack>
         </ThemeProvider>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   View, 
   Text, 
@@ -24,7 +24,7 @@ import {
   Phone,
   Globe
 } from 'lucide-react-native';
-import { colors, spacing } from '../../constants/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { getUserProfile, updateUserProfile, uploadProfileImage } from '../../services/users';
 import Button from '../../components/ui/Button';
@@ -33,7 +33,7 @@ import StoryCard from '../../components/story/StoryCard';
 import { getUserTrips } from '../../services/trips';
 import { getUserStories } from '../../services/stories';
 
-export default function Profile() {
+const Profile = () => {
   const router = useRouter();
   const { user, logout } = useAuth();
   const [profile, setProfile] = useState(null);
@@ -42,7 +42,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState('trips');
-  
+  const { theme } = useTheme();
+    
   useEffect(() => {
     if (user) {
       loadUserData();
@@ -153,6 +154,215 @@ export default function Profile() {
     router.push('/settings');
   };
 
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: theme.colors.gray[800],
+    },
+    headerActions: {
+      flexDirection: 'row',
+    },
+    headerButton: {
+      marginLeft: theme.spacing.md,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: theme.colors.gray[100],
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    scrollContent: {
+      paddingBottom: 40,
+    },
+    profileHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+    },
+    avatarContainer: {
+      position: 'relative',
+    },
+    avatar: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      backgroundColor: theme.colors.gray[200],
+    },
+    editAvatarButton: {
+      position: 'absolute',
+      bottom: 0,
+      right: 0,
+      backgroundColor: theme.colors.primary,
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: theme.colors.white,
+    },
+    profileInfo: {
+      flex: 1,
+      marginLeft: theme.spacing.md,
+    },
+    profileName: {
+      fontSize: 22,
+      fontWeight: '700',
+      color: theme.colors.gray[800],
+      marginBottom: theme.spacing.xs,
+    },
+    locationContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: theme.spacing.sm,
+    },
+    locationText: {
+      color: theme.colors.gray[600],
+      marginLeft: 4,
+      fontSize: 14,
+    },
+    editProfileButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    editProfileText: {
+      color: theme.colors.primary,
+      fontWeight: '600',
+      marginLeft: 4,
+    },
+    bioContainer: {
+      paddingHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.xs,
+      marginBottom: theme.spacing.md,
+    },
+    bioText: {
+      fontSize: 14,
+      lineHeight: 20,
+      color: theme.colors.gray[700],
+    },
+    statsContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-around',
+      paddingVertical: theme.spacing.md,
+      marginHorizontal: theme.spacing.lg,
+      backgroundColor: theme.colors.white,
+      borderRadius: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    statItem: {
+      alignItems: 'center',
+    },
+    statValue: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: theme.colors.primary,
+    },
+    statLabel: {
+      fontSize: 14,
+      color: theme.colors.gray[600],
+      marginTop: 2,
+    },
+    statDivider: {
+      height: 24,
+      width: 1,
+      backgroundColor: theme.colors.gray[200],
+    },
+    detailsContainer: {
+      marginHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.lg,
+      marginBottom: theme.spacing.md,
+      padding: theme.spacing.md,
+      backgroundColor: theme.colors.white,
+      borderRadius: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    detailItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.xs,
+    },
+    detailText: {
+      fontSize: 14,
+      color: theme.colors.gray[700],
+      marginLeft: theme.spacing.sm,
+    },
+    tabContainer: {
+      flexDirection: 'row',
+      marginHorizontal: theme.spacing.lg,
+      marginTop: theme.spacing.md,
+      borderRadius: 8,
+      backgroundColor: theme.colors.gray[100],
+      padding: 4,
+    },
+    tabButton: {
+      flex: 1,
+      paddingVertical: theme.spacing.sm,
+      alignItems: 'center',
+      borderRadius: 6,
+    },
+    activeTabButton: {
+      backgroundColor: theme.colors.white,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+    tabButtonText: {
+      fontWeight: '500',
+      color: theme.colors.gray[600],
+    },
+    activeTabButtonText: {
+      color: theme.colors.gray[800],
+    },
+    tabContent: {
+      marginTop: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+    },
+    cardWrapper: {
+      marginBottom: theme.spacing.md,
+    },
+    emptyStateContainer: {
+      alignItems: 'center',
+      paddingVertical: theme.spacing.xl,
+    },
+    emptyStateText: {
+      fontSize: 16,
+      color: theme.colors.gray[600],
+      marginBottom: theme.spacing.md,
+    },
+    emptyStateButton: {
+      width: '80%',
+    },
+  }), [theme]);
+
   if (!user || !profile) {
     return (
       <SafeAreaView style={styles.container}>
@@ -176,14 +386,14 @@ export default function Profile() {
             style={styles.headerButton}
             onPress={navigateToSettings}
           >
-            <Settings size={24} color={colors.gray[700]} />
+            <Settings size={24} color={theme.colors.gray[700]} />
           </TouchableOpacity>
           
           <TouchableOpacity 
             style={styles.headerButton}
             onPress={handleLogout}
           >
-            <LogOut size={24} color={colors.gray[700]} />
+            <LogOut size={24} color={theme.colors.gray[700]} />
           </TouchableOpacity>
         </View>
       </View>
@@ -195,7 +405,7 @@ export default function Profile() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={colors.primary}
+            tintColor={theme.colors.primary}
           />
         }
       >
@@ -211,7 +421,7 @@ export default function Profile() {
               style={styles.editAvatarButton}
               onPress={handleChangeProfileImage}
             >
-              <Camera size={16} color={colors.white} />
+              <Camera size={16} color={theme.colors.white} />
             </TouchableOpacity>
           </View>
           
@@ -222,7 +432,7 @@ export default function Profile() {
             
             {profile.location && (
               <View style={styles.locationContainer}>
-                <MapPin size={16} color={colors.primary} />
+                <MapPin size={16} color={theme.colors.primary} />
                 <Text style={styles.locationText}>{profile.location}</Text>
               </View>
             )}
@@ -231,7 +441,7 @@ export default function Profile() {
               style={styles.editProfileButton}
               onPress={handleEditProfile}
             >
-              <Edit2 size={16} color={colors.primary} />
+              <Edit2 size={16} color={theme.colors.primary} />
               <Text style={styles.editProfileText}>Edit Profile</Text>
             </TouchableOpacity>
           </View>
@@ -266,27 +476,27 @@ export default function Profile() {
         
         <View style={styles.detailsContainer}>
           <View style={styles.detailItem}>
-            <User size={20} color={colors.gray[600]} />
+            <User size={20} color={theme.colors.gray[600]} />
             <Text style={styles.detailText}>
               {profile.firstName} {profile.lastName}
             </Text>
           </View>
           
           <View style={styles.detailItem}>
-            <Mail size={20} color={colors.gray[600]} />
+            <Mail size={20} color={theme.colors.gray[600]} />
             <Text style={styles.detailText}>{profile.email}</Text>
           </View>
           
           {profile.phone && (
             <View style={styles.detailItem}>
-              <Phone size={20} color={colors.gray[600]} />
+              <Phone size={20} color={theme.colors.gray[600]} />
               <Text style={styles.detailText}>{profile.phone}</Text>
             </View>
           )}
           
           {profile.website && (
             <View style={styles.detailItem}>
-              <Globe size={20} color={colors.gray[600]} />
+              <Globe size={20} color={theme.colors.gray[600]} />
               <Text style={styles.detailText}>{profile.website}</Text>
             </View>
           )}
@@ -381,211 +591,4 @@ export default function Profile() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.gray[800],
-  },
-  headerActions: {
-    flexDirection: 'row',
-  },
-  headerButton: {
-    marginLeft: spacing.md,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.gray[100],
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  scrollContent: {
-    paddingBottom: 40,
-  },
-  profileHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-  },
-  avatarContainer: {
-    position: 'relative',
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: colors.gray[200],
-  },
-  editAvatarButton: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: colors.primary,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: colors.white,
-  },
-  profileInfo: {
-    flex: 1,
-    marginLeft: spacing.md,
-  },
-  profileName: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: colors.gray[800],
-    marginBottom: spacing.xs,
-  },
-  locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  locationText: {
-    color: colors.gray[600],
-    marginLeft: 4,
-    fontSize: 14,
-  },
-  editProfileButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  editProfileText: {
-    color: colors.primary,
-    fontWeight: '600',
-    marginLeft: 4,
-  },
-  bioContainer: {
-    paddingHorizontal: spacing.lg,
-    marginTop: spacing.xs,
-    marginBottom: spacing.md,
-  },
-  bioText: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: colors.gray[700],
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingVertical: spacing.md,
-    marginHorizontal: spacing.lg,
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  statItem: {
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.primary,
-  },
-  statLabel: {
-    fontSize: 14,
-    color: colors.gray[600],
-    marginTop: 2,
-  },
-  statDivider: {
-    height: 24,
-    width: 1,
-    backgroundColor: colors.gray[200],
-  },
-  detailsContainer: {
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.lg,
-    marginBottom: spacing.md,
-    padding: spacing.md,
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  detailItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.xs,
-  },
-  detailText: {
-    fontSize: 14,
-    color: colors.gray[700],
-    marginLeft: spacing.sm,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.md,
-    borderRadius: 8,
-    backgroundColor: colors.gray[100],
-    padding: 4,
-  },
-  tabButton: {
-    flex: 1,
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-    borderRadius: 6,
-  },
-  activeTabButton: {
-    backgroundColor: colors.white,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  tabButtonText: {
-    fontWeight: '500',
-    color: colors.gray[600],
-  },
-  activeTabButtonText: {
-    color: colors.gray[800],
-  },
-  tabContent: {
-    marginTop: spacing.md,
-    paddingHorizontal: spacing.lg,
-  },
-  cardWrapper: {
-    marginBottom: spacing.md,
-  },
-  emptyStateContainer: {
-    alignItems: 'center',
-    paddingVertical: spacing.xl,
-  },
-  emptyStateText: {
-    fontSize: 16,
-    color: colors.gray[600],
-    marginBottom: spacing.md,
-  },
-  emptyStateButton: {
-    width: '80%',
-  },
-});
+export default Profile;

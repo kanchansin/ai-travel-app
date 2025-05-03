@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   View, 
   Text, 
@@ -13,19 +13,15 @@ import {
   Dimensions
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { colors, spacing } from '../../constants/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 import { MapPin, X, Search, CheckCircle } from 'lucide-react-native';
 
-// This would typically come from your Mapbox service configuration
-// For this example we'll mock a simple search function
+// Mock search function (unchanged)
 const searchLocations = async (query) => {
-  // In a real app, this would call your Mapbox geocoding API
-  // For now, we'll simulate a delay and return dummy data
   await new Promise(resolve => setTimeout(resolve, 1000));
   
   if (!query.trim()) return [];
   
-  // Dummy results for demonstration
   return [
     { 
       id: '1', 
@@ -64,6 +60,7 @@ const MapSelector = ({
   initialLocation = '',
   initialCoordinates = { latitude: 37.78825, longitude: -122.4324 }
 }) => {
+  const { theme } = useTheme();
   const mapRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -120,7 +117,6 @@ const MapSelector = ({
     setSearchQuery('');
     Keyboard.dismiss();
     
-    // Animate map to the selected location
     mapRef.current?.animateToRegion({
       ...location.coordinates,
       latitudeDelta: 0.0922,
@@ -131,14 +127,155 @@ const MapSelector = ({
   const handleMapPress = (event) => {
     const newCoordinates = event.nativeEvent.coordinate;
     setCoordinates(newCoordinates);
-    
-    // In a real app, you would call reverse geocoding to get the location name
     setSelectedLocation('Selected Location');
   };
   
   const handleConfirm = () => {
     onSelect(selectedLocation, coordinates);
   };
+
+  const { width } = Dimensions.get('window');
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.white,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    closeButton: {
+      padding: theme.spacing.sm,
+    },
+    headerTitle: {
+      flex: 1,
+      textAlign: 'center',
+      fontSize: 18,
+      fontWeight: '600',
+      color: theme.colors.text,
+      marginRight: theme.spacing.lg, // To offset the back button and center the title
+    },
+    searchContainer: {
+      flexDirection: 'row',
+      padding: theme.spacing.md,
+      alignItems: 'center',
+    },
+    searchInputContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.gray[100], // Replaced backgroundLight
+      borderRadius: 8,
+      paddingHorizontal: theme.spacing.md,
+      height: 44,
+    },
+    searchIcon: {
+      marginRight: theme.spacing.sm,
+    },
+    searchInput: {
+      flex: 1,
+      height: '100%',
+      color: theme.colors.text,
+      fontSize: 16,
+    },
+    clearButton: {
+      padding: theme.spacing.sm,
+    },
+    searchButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: 8,
+      paddingHorizontal: theme.spacing.md,
+      height: 44,
+      justifyContent: 'center',
+      marginLeft: theme.spacing.sm,
+    },
+    searchButtonText: {
+      color: theme.colors.white,
+      fontWeight: '600',
+    },
+    loadingContainer: {
+      padding: theme.spacing.lg,
+      alignItems: 'center',
+    },
+    resultsContainer: {
+      maxHeight: 200,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
+    resultItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing.md,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.gray[200], // Replaced borderLight
+    },
+    resultIcon: {
+      marginRight: theme.spacing.md,
+    },
+    resultTextContainer: {
+      flex: 1,
+    },
+    resultTitle: {
+      fontSize: 16,
+      fontWeight: '500',
+      color: theme.colors.text,
+    },
+    resultSubtitle: {
+      fontSize: 14,
+      color: theme.colors.textLight,
+      marginTop: 2,
+    },
+    mapContainer: {
+      flex: 1,
+      overflow: 'hidden',
+    },
+    map: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    selectedLocationContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.gray[100], // Replaced backgroundLight
+      padding: theme.spacing.md,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.border,
+    },
+    locationIcon: {
+      marginRight: theme.spacing.md,
+    },
+    selectedLocationText: {
+      flex: 1,
+      fontSize: 16,
+      color: theme.colors.text,
+    },
+    confirmButton: {
+      flexDirection: 'row',
+      backgroundColor: theme.colors.primary,
+      margin: theme.spacing.md,
+      padding: theme.spacing.md,
+      borderRadius: 8,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    confirmButtonDisabled: {
+      backgroundColor: theme.colors.textLight,
+    },
+    confirmButtonText: {
+      color: theme.colors.white,
+      fontSize: 16,
+      fontWeight: '600',
+      marginRight: theme.spacing.sm,
+    },
+    confirmIcon: {
+      marginLeft: theme.spacing.sm,
+    },
+  }), [theme, width]);
   
   return (
     <Modal
@@ -156,7 +293,7 @@ const MapSelector = ({
             style={styles.closeButton}
             onPress={onClose}
           >
-            <X size={24} color={colors.primary} />
+            <X size={24} color={theme.colors.primary} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Select Location</Text>
         </View>
@@ -164,7 +301,7 @@ const MapSelector = ({
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <View style={styles.searchInputContainer}>
-            <Search size={20} color={colors.textLight} style={styles.searchIcon} />
+            <Search size={20} color={theme.colors.textLight} style={styles.searchIcon} />
             <TextInput
               style={styles.searchInput}
               placeholder="Search for a location"
@@ -178,7 +315,7 @@ const MapSelector = ({
                 onPress={() => setSearchQuery('')}
                 style={styles.clearButton}
               >
-                <X size={18} color={colors.textLight} />
+                <X size={18} color={theme.colors.textLight} />
               </TouchableOpacity>
             )}
           </View>
@@ -194,7 +331,7 @@ const MapSelector = ({
         {/* Search Results */}
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.primary} />
+            <ActivityIndicator size="large" color={theme.colors.primary} />
           </View>
         ) : searchResults.length > 0 ? (
           <View style={styles.resultsContainer}>
@@ -204,7 +341,7 @@ const MapSelector = ({
                 style={styles.resultItem}
                 onPress={() => handleSelectLocation(result)}
               >
-                <MapPin size={18} color={colors.primary} style={styles.resultIcon} />
+                <MapPin size={18} color={theme.colors.primary} style={styles.resultIcon} />
                 <View style={styles.resultTextContainer}>
                   <Text style={styles.resultTitle}>{result.name}</Text>
                   <Text style={styles.resultSubtitle}>{result.fullName}</Text>
@@ -224,7 +361,7 @@ const MapSelector = ({
           >
             {coordinates && (
               <Marker coordinate={coordinates}>
-                <MapPin size={30} color={colors.primary} />
+                <MapPin size={30} color={theme.colors.primary} />
               </Marker>
             )}
           </MapView>
@@ -232,7 +369,7 @@ const MapSelector = ({
         
         {/* Selected Location */}
         <View style={styles.selectedLocationContainer}>
-          <MapPin size={20} color={colors.primary} style={styles.locationIcon} />
+          <MapPin size={20} color={theme.colors.primary} style={styles.locationIcon} />
           <Text style={styles.selectedLocationText} numberOfLines={2}>
             {selectedLocation || 'No location selected'}
           </Text>
@@ -248,154 +385,11 @@ const MapSelector = ({
           disabled={!selectedLocation}
         >
           <Text style={styles.confirmButtonText}>Confirm Location</Text>
-          <CheckCircle size={20} color={colors.white} style={styles.confirmIcon} />
+          <CheckCircle size={20} color={theme.colors.white} style={styles.confirmIcon} />
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </Modal>
   );
 };
-
-const { width } = Dimensions.get('window');
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.white,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.medium,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  closeButton: {
-    padding: spacing.small,
-  },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.text,
-    marginRight: spacing.large, // To offset the back button and center the title
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    padding: spacing.medium,
-    alignItems: 'center',
-  },
-  searchInputContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.backgroundLight,
-    borderRadius: 8,
-    paddingHorizontal: spacing.medium,
-    height: 44,
-  },
-  searchIcon: {
-    marginRight: spacing.small,
-  },
-  searchInput: {
-    flex: 1,
-    height: '100%',
-    color: colors.text,
-    fontSize: 16,
-  },
-  clearButton: {
-    padding: spacing.small,
-  },
-  searchButton: {
-    backgroundColor: colors.primary,
-    borderRadius: 8,
-    paddingHorizontal: spacing.medium,
-    height: 44,
-    justifyContent: 'center',
-    marginLeft: spacing.small,
-  },
-  searchButtonText: {
-    color: colors.white,
-    fontWeight: '600',
-  },
-  loadingContainer: {
-    padding: spacing.large,
-    alignItems: 'center',
-  },
-  resultsContainer: {
-    maxHeight: 200,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  resultItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.medium,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  resultIcon: {
-    marginRight: spacing.medium,
-  },
-  resultTextContainer: {
-    flex: 1,
-  },
-  resultTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: colors.text,
-  },
-  resultSubtitle: {
-    fontSize: 14,
-    color: colors.textLight,
-    marginTop: 2,
-  },
-  mapContainer: {
-    flex: 1,
-    overflow: 'hidden',
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  selectedLocationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.backgroundLight,
-    padding: spacing.medium,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-  },
-  locationIcon: {
-    marginRight: spacing.medium,
-  },
-  selectedLocationText: {
-    flex: 1,
-    fontSize: 16,
-    color: colors.text,
-  },
-  confirmButton: {
-    flexDirection: 'row',
-    backgroundColor: colors.primary,
-    margin: spacing.medium,
-    padding: spacing.medium,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  confirmButtonDisabled: {
-    backgroundColor: colors.textLight,
-  },
-  confirmButtonText: {
-    color: colors.white,
-    fontSize: 16,
-    fontWeight: '600',
-    marginRight: spacing.small,
-  },
-  confirmIcon: {
-    marginLeft: spacing.small,
-  },
-});
 
 export default MapSelector;

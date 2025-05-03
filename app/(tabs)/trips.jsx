@@ -1,4 +1,4 @@
-//app/trips.jsx
+//app/(tabs)/trips.jsx
 
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, RefreshControl, StyleSheet, Pressable } from 'react-native';
@@ -13,10 +13,10 @@ import { getUserTrips } from '../../services/trips';
 import { useAuth } from '../../hooks/useAuth';
 import EmptyState from '../../components/ui/EmptyState';
 
-export default function Trips() {
+const Trips = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
   const [trips, setTrips] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -83,11 +83,11 @@ export default function Trips() {
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <StatusBar style="dark" />
       
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>My Trips</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>My Trips</Text>
         
         <Button
           variant="primary"
@@ -111,7 +111,7 @@ export default function Trips() {
           <Text style={[
             styles.filterText,
             filter === 'all' && styles.activeFilterText,
-            { color: filter === 'all' ? colors.white : colors.text }
+            { color: filter === 'all' ? theme.colors.white : theme.colors.text }
           ]}>
             All
           </Text>
@@ -121,14 +121,14 @@ export default function Trips() {
           style={[
             styles.filterButton, 
             filter === 'upcoming' && styles.activeFilterButton,
-            { borderColor: colors.neutral }
+            { borderColor: theme.colors.neutral }
           ]}
           onPress={() => setFilter('upcoming')}
         >
           <Text style={[
             styles.filterText,
             filter === 'upcoming' && styles.activeFilterText,
-            { color: filter === 'upcoming' ? colors.white : colors.text }
+            { color: filter === 'upcoming' ? theme.colors.white : theme.colors.text }
           ]}>
             Upcoming
           </Text>
@@ -138,14 +138,14 @@ export default function Trips() {
           style={[
             styles.filterButton, 
             filter === 'past' && styles.activeFilterButton,
-            { borderColor: colors.neutral }
+            { borderColor: theme.colors.neutral }
           ]}
           onPress={() => setFilter('past')}
         >
           <Text style={[
             styles.filterText,
             filter === 'past' && styles.activeFilterText,
-            { color: filter === 'past' ? colors.white : colors.text }
+            { color: filter === 'past' ? theme.colors.white : theme.colors.text }
           ]}>
             Past
           </Text>
@@ -162,7 +162,7 @@ export default function Trips() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={colors.accent}
+            tintColor={theme.colors.accent}
           />
         }
         ListEmptyComponent={!loading && renderEmptyState()}
@@ -171,6 +171,8 @@ export default function Trips() {
     </SafeAreaView>
   );
 }
+
+export default Trips;
 
 const styles = StyleSheet.create({
   container: {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { 
   View, 
   Text, 
@@ -7,7 +7,7 @@ import {
   TouchableOpacity 
 } from 'react-native';
 import { Heart, MessageCircle, Share2, MapPin, Calendar } from 'lucide-react-native';
-import { colors, spacing } from '../../constants/theme';
+import { useTheme } from '../../contexts/ThemeContext';
 
 const StoryCard = ({ 
   story, 
@@ -28,6 +28,7 @@ const StoryCard = ({
     comments = 0,
     user
   } = story;
+  const { theme } = useTheme();
 
   // Format date
   const formatDate = (timestamp) => {
@@ -39,6 +40,117 @@ const StoryCard = ({
       year: 'numeric' 
     });
   };
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      backgroundColor: theme.colors.white,
+      borderRadius: 12,
+      overflow: 'hidden',
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    imageContainer: {
+      position: 'relative',
+      height: 180,
+    },
+    image: {
+      width: '100%',
+      height: '100%',
+    },
+    placeholderImage: {
+      width: '100%',
+      height: '100%',
+      backgroundColor: theme.colors.gray[200],
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    placeholderText: {
+      color: theme.colors.gray[500],
+      fontWeight: '500',
+    },
+    locationBadge: {
+      position: 'absolute',
+      bottom: theme.spacing.sm,
+      left: theme.spacing.sm,
+      backgroundColor: 'rgba(0,0,0,0.6)',
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs / 2,
+      borderRadius: 16,
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    locationText: {
+      color: theme.colors.white,
+      fontSize: 12,
+      marginLeft: 4,
+      fontWeight: '500',
+    },
+    contentContainer: {
+      padding: theme.spacing.md,
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: theme.colors.gray[800],
+      marginBottom: theme.spacing.xs,
+    },
+    excerpt: {
+      fontSize: 14,
+      color: theme.colors.gray[600],
+      lineHeight: 20,
+      marginBottom: theme.spacing.sm,
+    },
+    metaContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: theme.spacing.xs,
+    },
+    dateContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    dateText: {
+      fontSize: 12,
+      color: theme.colors.gray[500],
+      marginLeft: 4,
+    },
+    interactionsContainer: {
+      flexDirection: 'row',
+    },
+    interactionItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginLeft: theme.spacing.sm,
+    },
+    interactionText: {
+      fontSize: 12,
+      color: theme.colors.gray[600],
+      marginLeft: 4,
+    },
+    userContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: theme.spacing.sm,
+      paddingTop: theme.spacing.sm,
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.gray[200],
+    },
+    userAvatar: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+    },
+    userName: {
+      fontSize: 12,
+      fontWeight: '500',
+      color: theme.colors.gray[700],
+      marginLeft: theme.spacing.xs,
+    },
+  }), [theme]);
 
   return (
     <TouchableOpacity 
@@ -63,7 +175,7 @@ const StoryCard = ({
         {/* Location badge */}
         {location && (
           <View style={styles.locationBadge}>
-            <MapPin size={14} color={colors.white} />
+            <MapPin size={14} color={theme.colors.white} />
             <Text style={styles.locationText}>{location}</Text>
           </View>
         )}
@@ -82,7 +194,7 @@ const StoryCard = ({
         {/* Date and Interactions */}
         <View style={styles.metaContainer}>
           <View style={styles.dateContainer}>
-            <Calendar size={14} color={colors.gray[500]} />
+            <Calendar size={14} color={theme.colors.gray[500]} />
             <Text style={styles.dateText}>{formatDate(createdAt)}</Text>
           </View>
           
@@ -93,19 +205,19 @@ const StoryCard = ({
             >
               <Heart 
                 size={16} 
-                color={colors.gray[600]} 
-                fill={story.isLiked ? colors.error : 'transparent'} 
+                color={theme.colors.gray[600]} 
+                fill={story.isLiked ? theme.colors.error : 'transparent'} 
               />
               <Text style={styles.interactionText}>{likes}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.interactionItem}>
-              <MessageCircle size={16} color={colors.gray[600]} />
+              <MessageCircle size={16} color={theme.colors.gray[600]} />
               <Text style={styles.interactionText}>{comments}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={styles.interactionItem}>
-              <Share2 size={16} color={colors.gray[600]} />
+              <Share2 size={16} color={theme.colors.gray[600]} />
             </TouchableOpacity>
           </View>
         </View>
@@ -128,116 +240,5 @@ const StoryCard = ({
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  imageContainer: {
-    position: 'relative',
-    height: 180,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  placeholderImage: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: colors.gray[200],
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderText: {
-    color: colors.gray[500],
-    fontWeight: '500',
-  },
-  locationBadge: {
-    position: 'absolute',
-    bottom: spacing.sm,
-    left: spacing.sm,
-    backgroundColor: 'rgba(0,0,0,0.6)',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs / 2,
-    borderRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  locationText: {
-    color: colors.white,
-    fontSize: 12,
-    marginLeft: 4,
-    fontWeight: '500',
-  },
-  contentContainer: {
-    padding: spacing.md,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.gray[800],
-    marginBottom: spacing.xs,
-  },
-  excerpt: {
-    fontSize: 14,
-    color: colors.gray[600],
-    lineHeight: 20,
-    marginBottom: spacing.sm,
-  },
-  metaContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: spacing.xs,
-  },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  dateText: {
-    fontSize: 12,
-    color: colors.gray[500],
-    marginLeft: 4,
-  },
-  interactionsContainer: {
-    flexDirection: 'row',
-  },
-  interactionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: spacing.sm,
-  },
-  interactionText: {
-    fontSize: 12,
-    color: colors.gray[600],
-    marginLeft: 4,
-  },
-  userContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: spacing.sm,
-    paddingTop: spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: colors.gray[200],
-  },
-  userAvatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-  },
-  userName: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: colors.gray[700],
-    marginLeft: spacing.xs,
-  },
-});
 
 export default StoryCard;

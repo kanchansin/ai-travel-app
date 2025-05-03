@@ -1,10 +1,8 @@
-// app/onboarding.jsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, Dimensions, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../contexts/ThemeContext';
 import Button from '../components/ui/Button';
-import { SIZES, FONTS, colors } from '../constants/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -35,7 +33,7 @@ export default function OnboardingScreen() {
   const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef(null);
   const router = useRouter();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
 
   const handleNext = () => {
     if (currentIndex < onboardingData.length - 1) {
@@ -53,18 +51,76 @@ export default function OnboardingScreen() {
     router.replace('/(auth)/login');
   };
 
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    slide: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: theme.spacing.layout,
+      width,
+    },
+    image: {
+      width: width * 0.8,
+      height: width * 0.8,
+      marginBottom: theme.spacing.xl,
+    },
+    title: {
+      fontFamily: theme.fonts.bold,
+      fontSize: theme.fonts.size.large,
+      color: theme.colors.primary,
+      marginBottom: theme.spacing.md,
+      textAlign: 'center',
+    },
+    description: {
+      fontFamily: theme.fonts.regular,
+      fontSize: theme.fonts.size.medium,
+      color: theme.colors.textLight,
+      textAlign: 'center',
+      paddingHorizontal: theme.spacing.md,
+    },
+    paginationContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: theme.spacing.xl,
+    },
+    dot: {
+      height: 8,
+      borderRadius: 4,
+      marginHorizontal: 4,
+      backgroundColor: theme.colors.primary,
+    },
+    buttonsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: theme.spacing.layout,
+      paddingBottom: theme.spacing.xl,
+      alignItems: 'center',
+    },
+    skipButton: {
+      width: 80,
+    },
+    nextButton: {
+      width: 120,
+    },
+  }), [theme]);
+
   const renderOnboardingItem = ({ item }) => {
     return (
-      <View style={[styles.slide, { width }]}>
+      <View style={styles.slide}>
         <Image 
           source={item.image} 
           style={styles.image} 
           resizeMode="contain" 
         />
-        <Text style={[styles.title, { color: colors.primary }]}>
+        <Text style={styles.title}>
           {item.title}
         </Text>
-        <Text style={[styles.description, { color: colors.textLight }]}>
+        <Text style={styles.description}>
           {item.description}
         </Text>
       </View>
@@ -102,7 +158,6 @@ export default function OnboardingScreen() {
                 { 
                   width: dotWidth,
                   opacity,
-                  backgroundColor: colors.primary 
                 },
               ]}
             />
@@ -113,7 +168,7 @@ export default function OnboardingScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={styles.container}>
       <FlatList
         ref={flatListRef}
         data={onboardingData}
@@ -152,56 +207,3 @@ export default function OnboardingScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  slide: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: SIZES.layout,
-  },
-  image: {
-    width: width * 0.8,
-    height: width * 0.8,
-    marginBottom: SIZES.xl,
-  },
-  title: {
-    ...FONTS.bold,
-    fontSize: FONTS.sizes.xl,
-    marginBottom: SIZES.md,
-    textAlign: 'center',
-  },
-  description: {
-    ...FONTS.regular,
-    fontSize: FONTS.sizes.md,
-    textAlign: 'center',
-    paddingHorizontal: SIZES.md,
-  },
-  paginationContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: SIZES.xl,
-  },
-  dot: {
-    height: 8,
-    borderRadius: 4,
-    marginHorizontal: 4,
-  },
-  buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: SIZES.layout,
-    paddingBottom: SIZES.xl,
-    alignItems: 'center',
-  },
-  skipButton: {
-    width: 80,
-  },
-  nextButton: {
-    width: 120,
-  },
-});
