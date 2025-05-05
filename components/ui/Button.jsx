@@ -1,5 +1,4 @@
-// components/ui/Button.jsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 
@@ -16,10 +15,20 @@ const Button = ({
   style = {},
   textStyle = {},
 }) => {
-  const { colors } = useTheme();
-  
+  const { theme } = useTheme();
+  const colors = theme.colors;
+
+  // Add fallbacks for theme colors
+  const safeColors = {
+    primary: colors?.primary || '#191970',
+    neutral: colors?.neutral || '#6B7280',
+    background: colors?.background || '#FFFFFF',
+    accent: colors?.accent || '#EF4444',
+    text: colors?.text || '#1F2937',
+  };
+
   // Define sizes
-  const sizeStyles = {
+  const sizeStyles = useMemo(() => ({
     small: {
       paddingVertical: 8,
       paddingHorizontal: 16,
@@ -38,40 +47,58 @@ const Button = ({
       borderRadius: 10,
       fontSize: 18,
     },
-  };
-  
+  }), []);
+
   // Define variants
-  const variantStyles = {
+  const variantStyles = useMemo(() => ({
     primary: {
-      backgroundColor: disabled ? colors.neutral : colors.primary,
+      backgroundColor: disabled ? safeColors.neutral : safeColors.primary,
       borderWidth: 0,
-      textColor: colors.background,
+      textColor: safeColors.background,
     },
     secondary: {
       backgroundColor: 'transparent',
       borderWidth: 1,
-      borderColor: colors.primary,
-      textColor: colors.primary,
+      borderColor: safeColors.primary,
+      textColor: safeColors.primary,
     },
     accent: {
-      backgroundColor: disabled ? colors.neutral : colors.accent,
+      backgroundColor: disabled ? safeColors.neutral : safeColors.accent,
       borderWidth: 0,
-      textColor: colors.background,
+      textColor: safeColors.background,
     },
     outline: {
       backgroundColor: 'transparent',
       borderWidth: 1,
-      borderColor: colors.neutral,
-      textColor: colors.text,
+      borderColor: safeColors.neutral,
+      textColor: safeColors.text,
     },
     text: {
       backgroundColor: 'transparent',
       borderWidth: 0,
-      textColor: colors.primary,
+      textColor: safeColors.primary,
       paddingVertical: 4,
       paddingHorizontal: 8,
     },
-  };
+  }), [disabled, safeColors]);
+
+  const styles = useMemo(() => StyleSheet.create({
+    button: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    text: {
+      fontWeight: '600',
+      textAlign: 'center',
+    },
+    fullWidth: {
+      width: '100%',
+    },
+    disabled: {
+      opacity: 0.6,
+    },
+  }), []);
 
   const buttonStyles = [
     styles.button,
@@ -112,23 +139,5 @@ const Button = ({
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  disabled: {
-    opacity: 0.6,
-  },
-});
 
 export default Button;

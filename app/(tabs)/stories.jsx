@@ -1,6 +1,4 @@
-// app\(tabs)\stories.jsx
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl, TouchableOpacity, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -107,6 +105,120 @@ const Stories = () => {
     router.push(`/story/${storyId}`);
   };
 
+  // Format date
+  const formatDate = (timestamp) => {
+    if (!timestamp) return '';
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    });
+  };
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.md,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: '700',
+      color: theme.colors.gray[800],
+    },
+    listContent: {
+      padding: theme.spacing.lg,
+      paddingTop: theme.spacing.sm,
+    },
+    storyCard: {
+      backgroundColor: theme.colors.white,
+      borderRadius: 12,
+      padding: theme.spacing.md,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    userInfoContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    avatar: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: theme.colors.gray[200],
+      marginRight: theme.spacing.sm,
+    },
+    userName: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.gray[800],
+    },
+    timestamp: {
+      fontSize: 12,
+      color: theme.colors.gray[500],
+      marginTop: 2,
+    },
+    storyTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: theme.colors.gray[800],
+      marginBottom: theme.spacing.sm,
+    },
+    storyImage: {
+      width: '100%',
+      height: 200,
+      borderRadius: 8,
+      marginBottom: theme.spacing.md,
+    },
+    storyExcerpt: {
+      fontSize: 14,
+      lineHeight: 20,
+      color: theme.colors.gray[700],
+      marginBottom: theme.spacing.md,
+    },
+    locationContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: theme.spacing.md,
+    },
+    location: {
+      fontSize: 14,
+      color: theme.colors.primary,
+      fontWeight: '500',
+    },
+    actionsContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      borderTopWidth: 1,
+      borderTopColor: theme.colors.gray[100],
+      paddingTop: theme.spacing.sm,
+    },
+    actionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: theme.spacing.xs,
+    },
+    actionText: {
+      fontSize: 14,
+      color: theme.colors.gray[600],
+      marginLeft: 4,
+    },
+    separator: {
+      height: theme.spacing.md,
+    }
+  }), [theme]);
+
   const renderStoryItem = ({ item }) => {
     const isLiked = user && item.likes?.includes(user.uid);
     const isSaved = user && item.saved?.includes(user.uid);
@@ -123,7 +235,7 @@ const Stories = () => {
           />
           <View>
             <Text style={styles.userName}>{item.author.name}</Text>
-            <Text style={styles.timestamp}>{item.createdAt}</Text>
+            <Text style={styles.timestamp}>{formatDate(item.createdAt)}</Text>
           </View>
         </TouchableOpacity>
         
@@ -154,8 +266,8 @@ const Stories = () => {
           >
             <Heart 
               size={20} 
-              color={isLiked ? theme.colors.error[500] : theme.colors.gray[500]} 
-              fill={isLiked ? theme.colors.error[500] : 'transparent'}
+              color={isLiked ? theme.colors.error : theme.colors.gray[500]} 
+              fill={isLiked ? theme.colors.error : 'transparent'}
             />
             <Text style={styles.actionText}>{item.likeCount || 0}</Text>
           </TouchableOpacity>
@@ -240,106 +352,3 @@ const Stories = () => {
 }
 
 export default Stories;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.md,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: theme.colors.gray[800],
-  },
-  listContent: {
-    padding: theme.spacing.lg,
-    paddingTop: theme.spacing.sm,
-  },
-  storyCard: {
-    backgroundColor: theme.colors.white,
-    borderRadius: 12,
-    padding: theme.spacing.md,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  userInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: theme.colors.gray[200],
-    marginRight: theme.spacing.sm,
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: theme.colors.gray[800],
-  },
-  timestamp: {
-    fontSize: 12,
-    color: theme.colors.gray[500],
-    marginTop: 2,
-  },
-  storyTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: theme.colors.gray[800],
-    marginBottom: theme.spacing.sm,
-  },
-  storyImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 8,
-    marginBottom: theme.spacing.md,
-  },
-  storyExcerpt: {
-    fontSize: 14,
-    lineHeight: 20,
-    color: theme.colors.gray[700],
-    marginBottom: theme.spacing.md,
-  },
-  locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: theme.spacing.md,
-  },
-  location: {
-    fontSize: 14,
-    color: theme.colors.primary,
-    fontWeight: '500',
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.gray[100],
-    paddingTop: theme.spacing.sm,
-  },
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: theme.spacing.xs,
-  },
-  actionText: {
-    fontSize: 14,
-    color: theme.colors.gray[600],
-    marginLeft: 4,
-  },
-  separator: {
-    height: theme.spacing.md,
-  }
-});

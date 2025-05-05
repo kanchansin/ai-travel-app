@@ -1,5 +1,4 @@
-// components/ui/Input.jsx
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, TextInput, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Feather } from '@expo/vector-icons';
@@ -23,7 +22,7 @@ const Input = ({
   onBlur = () => {},
   onFocus = () => {},
 }) => {
-  const { colors } = useTheme();
+  const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -40,6 +39,55 @@ const Input = ({
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
+
+  // Add fallbacks for theme colors
+  const colors = {
+    text: theme.colors?.text || '#1F2937',
+    accent: theme.colors?.accent || '#EF4444',
+    primary: theme.colors?.primary || '#191970',
+    border: theme.colors?.border || '#D1D5DB',
+    background: theme.colors?.background || '#FFFFFF',
+    neutral: theme.colors?.neutral || '#6B7280',
+    white: theme.colors?.white || '#FFFFFF',
+  };
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      marginBottom: 16,
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '500',
+      marginBottom: 6,
+    },
+    inputContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderRadius: 8,
+      overflow: 'hidden',
+    },
+    input: {
+      flex: 1,
+      height: 48,
+      paddingHorizontal: 12,
+      fontSize: 16,
+    },
+    multilineInput: {
+      height: 100,
+      textAlignVertical: 'top',
+      paddingTop: 12,
+    },
+    iconContainer: {
+      paddingHorizontal: 12,
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    errorText: {
+      fontSize: 12,
+      marginTop: 4,
+    },
+  }), []);
 
   return (
     <View style={[styles.container, style]}>
@@ -111,43 +159,5 @@ const Input = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 6,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  input: {
-    flex: 1,
-    height: 48,
-    paddingHorizontal: 12,
-    fontSize: 16,
-  },
-  multilineInput: {
-    height: 100,
-    textAlignVertical: 'top',
-    paddingTop: 12,
-  },
-  iconContainer: {
-    paddingHorizontal: 12,
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    fontSize: 12,
-    marginTop: 4,
-  },
-});
 
 export default Input;

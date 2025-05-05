@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { 
   View, 
   Text, 
   StyleSheet, 
-  TouchableOpacity 
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 import { useTheme } from '../../contexts/ThemeContext';
 import { Check } from 'lucide-react-native';
@@ -30,13 +31,50 @@ const TagSelector = ({
     
     // If max items already selected, alert user
     if (selectedItems.length >= maxSelection && !isSelected) {
-      // You could show an alert here if you want
+      Alert.alert(
+        'Selection Limit Reached',
+        `You can only select up to ${maxSelection} tags. Deselect a tag to choose another.`,
+        [{ text: 'OK' }]
+      );
       return;
     }
     
     // Otherwise select the item
     onSelectItem(item);
   };
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+    },
+    tag: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: theme.colors.gray[100],
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      borderRadius: 20,
+      marginRight: theme.spacing.sm,
+      marginBottom: theme.spacing.sm,
+    },
+    tagSelected: {
+      backgroundColor: theme.colors.primary,
+    },
+    tagDisabled: {
+      opacity: 0.6,
+    },
+    checkIcon: {
+      marginRight: 4,
+    },
+    tagText: {
+      color: theme.colors.gray[700],
+      fontWeight: '500',
+    },
+    tagTextSelected: {
+      color: theme.colors.white,
+    },
+  }), [theme]);
   
   return (
     <View style={styles.container}>
@@ -75,38 +113,5 @@ const TagSelector = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  tag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.gray[100],
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: 20,
-    marginRight: theme.spacing.sm,
-    marginBottom: theme.spacing.sm,
-  },
-  tagSelected: {
-    backgroundColor: theme.colors.primary,
-  },
-  tagDisabled: {
-    opacity: 0.6,
-  },
-  checkIcon: {
-    marginRight: 4,
-  },
-  tagText: {
-    color: theme.colors.gray[700],
-    fontWeight: '500',
-  },
-  tagTextSelected: {
-    color: theme.colors.white,
-  },
-});
 
 export default TagSelector;

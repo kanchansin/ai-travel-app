@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import MapboxGL from '@rnmapbox/maps';
 import { useTheme } from '../../contexts/ThemeContext';
 import { getPointsOfInterest } from '../../services/mapbox';
 import PlaceMarker from './PlaceMarker';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../contexts/AuthContext'; // Fixed import path
 
-MapboxGL.setAccessToken('YOUR_MAPBOX_ACCESS_TOKEN'); // Replace with your actual token in production
+MapboxGL.setAccessToken('your_public_mapbox_token_here'); // Replace with your actual public token (pk.)
 
 const MapView = ({ 
   initialRegion = { 
@@ -58,12 +58,37 @@ const MapView = ({
     });
   };
 
+  // Add fallbacks for theme properties
+  const colors = {
+    accent: theme.colors?.accent || '#EF4444',
+  };
+
+  const styles = useMemo(() => StyleSheet.create({
+    container: {
+      flex: 1,
+      position: 'relative',
+    },
+    map: {
+      flex: 1,
+    },
+    loadingContainer: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0,0,0,0.3)',
+    },
+  }), []);
+
   return (
     <View style={styles.container}>
       <MapboxGL.MapView
         ref={mapRef}
         style={styles.map}
-        styleURL={theme.dark ? MapboxGL.StyleURL.Dark : MapboxGL.StyleURL.Street}
+        styleURL={theme.mode === 'dark' ? MapboxGL.StyleURL.Dark : MapboxGL.StyleURL.Street}
         onRegionDidChange={onRegionDidChange}
       >
         <MapboxGL.Camera
@@ -103,31 +128,11 @@ const MapView = ({
       
       {loading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={theme.colors.accent} />
+          <ActivityIndicator size="large" color={colors.accent} />
         </View>
       )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative',
-  },
-  map: {
-    flex: 1,
-  },
-  loadingContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.3)',
-  },
-});
 
 export default MapView;
