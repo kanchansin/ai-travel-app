@@ -120,7 +120,7 @@ export default function LoginScreen() {
     registerContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
-      marginTop: theme.spacing.xl,
+      marginTop: theme.spacing.md,
     },
     registerText: {
       ...theme.fonts.regular,

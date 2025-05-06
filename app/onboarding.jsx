@@ -70,14 +70,14 @@ export default function OnboardingScreen() {
     },
     title: {
       fontFamily: theme.fonts.bold,
-      fontSize: theme.fonts.size.large,
+      fontSize: theme.fonts.size.lg,
       color: theme.colors.primary,
       marginBottom: theme.spacing.md,
       textAlign: 'center',
     },
     description: {
       fontFamily: theme.fonts.regular,
-      fontSize: theme.fonts.size.medium,
+      fontSize: theme.fonts.size.md,
       color: theme.colors.textLight,
       textAlign: 'center',
       paddingHorizontal: theme.spacing.md,
